@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}
+Neue Zugfahrt
+{% endblock %}
+
+{% block content %}
+<h1>Zugfahrten</h1>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">Startstation</th>
+        <th scope="col">Endstation</th>
+        <th scope="col">Startzeit</th>
+        <th scope="col">Endzeit</th>
+        <th scope="col">Zug</th>
+        <th scope="col">Verspätung</th>
+        <th scope="col">Kommentar</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for ride in rides.values() %}
+      <tr>
+        <th scope="row">{{ ride.id }}</th>
+        <td>{{ stations[ride.start_station_id].name }}</td>
+        <td>{{ stations[ride.end_station_id].name }}</td>
+        <td>{{ ride.start_time }}</td>
+        <td>{{ ride.end_time }}</td>
+        <td><a href="/train?id={{ ride.train_id }}">{{ trains[ride.train_id].name }}</a></td>
+        <td>+{{ ride.delay }}</td>
+        <td>{{ ride.comment }} </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}
+Neue Zugfahrt
+{% endblock %}
+
+{% block content %}
+<h1>Neue Zugfahrt anlegen</h1>
+
+<form action="/new_ride" method="post" class="mt-4">
+
+  <!-- Startstation -->
+  <label for="start_station_id" class="form-label">Startstation</label>
+  <select id="start_station_id" name="start_station_id" class="form-select" required>
+    <option value="">-- Bitte wählen --</option>
+    {% for station in stations %}
+      <option value="{{ station.id }}">{{ station.name }} – {{ station.ort }}</option>
+    {% endfor %}
+  </select>
+
+  <!-- Endstation -->
+  <label for="end_station_id" class="form-label mt-3">Endstation</label>
+  <select id="end_station_id" name="end_station_id" class="form-select" required>
+    <option value="">-- Bitte wählen --</option>
+    {% for station in stations %}
+      <option value="{{ station.id }}">{{ station.name }} – {{ station.ort }}</option>
+    {% endfor %}
+  </select>
+
+  <!-- Startzeit -->
+  <label for="start_time" class="form-label mt-3">Startzeit</label>
+  <input type="datetime-local" id="start_time" name="start_time" class="form-control" required>
+
+  <!-- Endzeit -->
+  <label for="end_time" class="form-label mt-3">Ankunftzeit</label>
+  <input type="datetime-local" id="end_time" name="end_time" class="form-control" required>
+
+  <!-- Zug -->
+  <label for="train_id" class="form-label mt-3">Zug</label>
+  <select id="train_id" name="train_id" class="form-select" required>
+    <option value="">-- Bitte wählen --</option>
+    {% for train in trains %}
+      <option value="{{ train.id }}">{{ train.name }} ({{ train.comment }})</option>
+    {% endfor %}
+  </select>
+
+  <!-- Verspätung -->
+  <label for="delay" class="form-label mt-3">Verspätung</label>
+  <input type="text" id="delay" name="delay" class="form-control">
+
+
+  <!-- Kommentar -->
+  <label for="comment" class="form-label mt-3">Kommentar</label>
+  <input type="text" id="comment" name="comment" class="form-control">
+
+  <button type="submit" class="btn btn-primary mt-4">Speichern</button>
+  <a href="{{ url_for('trains_page') }}" class="btn btn-secondary mt-4">Abbrechen</a>
+
+</form>
+{% endblock %}

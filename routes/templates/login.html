@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<form method="POST" class="form-register" action="/login">
+  <br>
+  <h1 class="h3 mb-3 font-weight-normal">Please Login</h1>
+
+  <label for="Username" class="form-label">Username</label>
+  <input type="text" id="Username" name="Username" class="form-control">
+  <label for="Password" class="form-label">Password</label>
+  <input type="password" id="Password" name="Password" class="form-control">
+
+  <label for="captcha" class="form-label">
+    Bitte löse: {{ captcha }}
+  </label>
+  <input type="text" id="captcha" name="captcha" class="form-control" autocomplete="off">
+
+  <br>
+  <button type="submit" id="submit" class="btn btn-dark">Login</button>
+
+</form>
+<p style="color: #DC143C">You need to be logged in to access the site!</p>
+{% endblock %}

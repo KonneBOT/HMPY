@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Tung Tung Tung Zug
+{% endblock %}
+
+{% block content %}
+{% if (result|length) >= 1 %}
+<h2>Zug mit Id {{ result[0][0] }}</h2>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Typ</th>
+        <th scope="col">Kommentar</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for i in range(result|length) %}
+      <tr>
+        <th scope="row">{{ result[i][0] }}</th>
+        <td>{{ result[i][1] }}</td>
+        <td>{{ result[i][2] }}</td>
+        <td>{{ result[i][3] }} </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+<h2>No Train Found with Id {{ request.args.get('id') }}</h2>
+{% endif %}
+{% endblock %}

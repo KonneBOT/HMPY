@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Trains
+{% endblock %}
+
+{% block content %}
+
+<h2>Alle Züge</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Typ</th>
+        <th scope="col">Kommentar</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for train in trains.values() %}
+      <tr>
+        <th scope="row">{{ train.id }}</th>
+        <td><a href="/train?id={{ train.id }}">{{ train.name }}</a></td>
+        <td>{{ train.typ }}</td>
+        <td>{{ train.comment }} </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

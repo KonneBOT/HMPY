@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}
+New Train, Station or Ride
+{% endblock %}
+
+{% block content %}
+<button type="button" class="btn btn-danger" onclick="window.location.href='/new_train'">Neuer Zug</button>
+<button type="button" class="btn btn-warning" onclick="window.location.href='/new_station'">Neuer Bahnhof</button>
+<button type="button" class="btn btn-info" onclick="window.location.href='/new_ride'">Neue Zugfahrt</button>
+
+{% endblock %}

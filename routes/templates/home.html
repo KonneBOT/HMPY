@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Shopping
+{% endblock %}
+
+{% block content %}
+<h1>Übersicht</h1>
+<h2>Alle Züge</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Typ</th>
+        <th scope="col">Kommentar</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for train in trains.values() %}
+      <tr>
+        <th scope="row">{{ train.id }}</th>
+        <td>{{ train.name }}</td>
+        <td>{{ train.typ }}</td>
+        <td>{{ train.comment }} </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+<h2>Alle Bahnhöfe</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Ort</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for station in stations.values() %}
+      <tr>
+        <th scope="row">{{ station.id }}</th>
+        <td>{{ station.name }}</td>
+        <td>{{ station.ort }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+<h2>Alle Zugfahrten</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">Startstation</th>
+        <th scope="col">Endstation</th>
+        <th scope="col">Startzeit</th>
+        <th scope="col">Endzeit</th>
+        <th scope="col">Zug</th>
+        <th scope="col">Verspätung</th>
+        <th scope="col">Kommentar</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for ride in rides.values() %}
+      <tr>
+        <th scope="row">{{ ride.id }}</th>
+        <td>{{ stations[ride.start_station_id].name }}</td>
+        <td>{{ stations[ride.end_station_id].name }}</td>
+        <td>{{ ride.start_time }}</td>
+        <td>{{ ride.end_time }}</td>
+        <td><a href="/train?id={{ ride.train_id }}">{{ trains[ride.train_id].name }}</a></td>
+        <td>+{{ ride.delay }}</td>
+        <td>{{ ride.comment }} </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

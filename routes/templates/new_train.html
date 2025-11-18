@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+New Train
+{% endblock %}
+
+{% block content %}
+<form method="POST" class="form-register" action="/new_train">
+  <br>
+  <h1 class="h3 mb-3 font-weight-normal">Neuen Zug anlegen</h1>
+
+  <label for="name" class="form-label">Name</label>
+  <input type="text" id="name" name="name" class="form-control">
+  <label for="typ" class="form-label">Typ</label>
+  <input type="text" id="typ" name="typ" class="form-control">
+  <label for="comment" class="form-label">Kommentar</label>
+  <input type="text" id="comment" name="comment" class="form-control">
+  <br>
+  <button type="submit" class="btn btn-dark">Anlegen</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+New Station
+{% endblock %}
+
+{% block content %}
+<form method="POST" class="form-register" action="/new_station">
+  <br>
+  <h1 class="h3 mb-3 font-weight-normal">Neuen Bahnhof anlegen</h1>
+
+  <label for="name" class="form-label">Name</label>
+  <input type="text" id="name" name="name" class="form-control">
+  <label for="ort" class="form-label">Ort</label>
+  <input type="text" id="ort" name="ort" class="form-control">
+  <br>
+  <button type="submit" class="btn btn-dark">Anlegen</button>
+</form>
+
+{% endblock %}
