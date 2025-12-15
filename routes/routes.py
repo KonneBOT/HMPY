@@ -96,9 +96,12 @@ def register_page():
             print("Register: Something with password is wrong 2")
             return render_template('register.html', cookie=None)
 
-        qstmt = f"INSERT INTO bugusers (username, email_address, password) VALUES ('{username}', '{email_address}', '{password}');"  # Query Statement
+        qstmt = text(f"INSERT INTO bugusers (username, email_address, password) VALUES (:username, :email_address, :password);")  # Query Statement
         print(f"qstmt: {qstmt}")
-        result = db.session.execute(text(qstmt))
+        result = db.session.execute(qstmt, {"username": username, "email_address": email_address, "password": password})
+        print(
+            f"Register: User {username} registered successfully."
+        )
 
         qstmt = f"SELECT * FROM bugusers WHERE username = '{username}';"
         user = db.session.execute(text(qstmt)).fetchall()
