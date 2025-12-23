@@ -19,8 +19,8 @@ def favicon():
 
 @app.route('/')
 def index():
-    cookie = request.cookies.get('name')
-    if not request.cookies.get('name'):
+    sessionName = session.get('name')
+    if not sessionName:
         return redirect(url_for('login_page'))
     return render_template('index.html')
 
@@ -37,11 +37,11 @@ def login_page():
 
         if username is None or isinstance(username,str) is False or len(username) < 1:
             print("Something with username is wrong 1")
-            return render_template('login.html', cookie=None)
+            return render_template('login.html')
 
         if password is None or isinstance(password,str) is False or len(password) < 1:
             print("Something with password is wrong 2")
-            return render_template('login.html', cookie=None)
+            return render_template('login.html')
 
         if 'login_attempts' in session:
             session['login_attempts'] += 1
@@ -52,7 +52,7 @@ def login_page():
         correct_answer = session.get('captcha_answer')
         if not correct_answer or user_captcha != correct_answer:
             flash("Captcha wrong - try again.", "error")
-            return render_template('login.html', cookie=None)
+            return render_template('login.html')
 
         qstmt = text("SELECT * FROM bugusers WHERE username = :username AND password = :password") # Query Statement
         print(f"qstmt: {qstmt}")
@@ -61,21 +61,22 @@ def login_page():
 
         if not user:
             print("Something wrong 3")
-            return render_template('login.html', cookie=None)
+            return render_template('login.html')
 
 
         print(f"Login: OK, Forwarding...", user)
         resp = redirect('/home')
-        resp.set_cookie('name', username)
+        session['name'] = username
         return resp
     else:
         captcha_question = generate_captcha()
-        return render_template('login.html', captcha=captcha_question, cookie=None)
+        session.pop('name', None)   # Reset User Session
+        return render_template('login.html', captcha=captcha_question)
 
 @app.route('/logout')
 def logout():
     resp = redirect('/')
-    resp.set_cookie('name', '', expires=0)
+    session.pop('name', None)   # Reset User Session
     return resp
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -90,11 +91,11 @@ def register_page():
 
         if username is None or isinstance(username, str) is False or len(username) < 1:
             print("Register: Something with username is wrong 1")
-            return render_template('register.html', cookie=None)
+            return render_template('register.html')
 
         if password is None or isinstance(password, str) is False or len(password) < 1:
             print("Register: Something with password is wrong 2")
-            return render_template('register.html', cookie=None)
+            return render_template('register.html')
 
         qstmt = text(f"INSERT INTO bugusers (username, email_address, password) VALUES (:username, :email_address, :password);")  # Query Statement
         print(f"qstmt: {qstmt}")
@@ -103,14 +104,14 @@ def register_page():
             f"Register: User {username} registered successfully."
         )
 
-        qstmt = f"SELECT * FROM bugusers WHERE username = '{username}';"
-        user = db.session.execute(text(qstmt)).fetchall()
+        qstmt = text("SELECT * FROM bugusers WHERE username = ':username';")
+        user = db.session.execute(qstmt, {"username": username,}).fetchall()
         print(f"Register Result: {user}")
         if user:
             db.session.commit()
             print("Register: OK, Forwarding...")
             resp = redirect('/home')
-            resp.set_cookie('name', username)
+            session['name'] = username
             return resp
         else:
             print("Register: Something went wrong 4")
@@ -119,9 +120,9 @@ def register_page():
 
 
 @app.route('/home')
-def home_page():
-    cookie = request.cookies.get('name')
-    if not request.cookies.get('name'):
+def home_page():    
+    sessionName = session.get('name')
+    if not sessionName:
         return redirect(url_for('login_page'))
 
     trains, stations, rides = getAllInfo()
@@ -130,18 +131,20 @@ def home_page():
 
 @app.route('/trains')
 def trains_page():
-    cookie = request.cookies.get('name')
-    if not request.cookies.get('name'):
-        return redirect('/login')
+    sessionName = session.get('name')
+    if not sessionName:
+        return redirect(url_for('login_page'))
+    
     trains, stations, rides = getAllInfo()
     return render_template('trains.html', trains=trains, stations=stations, rides=rides)
 
 
 @app.route('/rides', methods=['GET', 'POST'])
 def rides_page():
-    cookie = request.cookies.get('name')
-    if not request.cookies.get('name'):
-        return redirect('/login')
+    sessionName = session.get('name')
+    if not sessionName:
+        return redirect(url_for('login_page'))
+    
     if request.method == "GET":
         trains, stations, rides = getAllInfo()
         return render_template('rides.html', trains=trains, stations=stations, rides=rides)
@@ -150,17 +153,17 @@ def rides_page():
 
 @app.route('/new')
 def new_page():
-    cookie = request.cookies.get('name')
-    if not request.cookies.get('name'):
-        return redirect('/login')
+    sessionName = session.get('name')
+    if not sessionName:
+        return redirect(url_for('login_page'))
 
     return render_template('new.html')
 
 @app.route('/new_train', methods=['GET', 'POST'])
 def new_train_page():
-    cookie = request.cookies.get('name')
-    if not request.cookies.get('name'):
-        return redirect('/login')
+    sessionName = session.get('name')
+    if not sessionName:
+        return redirect(url_for('login_page'))
 
     # Neuen Zug anlegen
     if request.method == "GET":
@@ -179,9 +182,9 @@ def new_train_page():
 
 @app.route('/new_ride', methods=['GET', 'POST'])
 def new_ride_page():
-    cookie = request.cookies.get('name')
-    if not request.cookies.get('name'):
-        return redirect('login')
+    sessionName = session.get('name')
+    if not sessionName:
+        return redirect(url_for('login_page'))
 
     # Neue Zugfahrt anlegen
     if request.method == "GET":
@@ -216,9 +219,9 @@ def new_ride_page():
 
 @app.route('/new_station', methods=['GET', 'POST'])
 def new_station_page():
-    cookie = request.cookies.get('name')
-    if not request.cookies.get('name'):
-        return redirect('/login')
+    sessionName = session.get('name')
+    if not sessionName:
+        return redirect(url_for('login_page'))
 
     if request.method == "GET":
         return render_template("new_station.html")
@@ -227,8 +230,8 @@ def new_station_page():
         name = request.form.get('name')
         ort = request.form.get('ort')
         if name and ort:
-            qstmt = f"INSERT INTO bahnhof (name, ort) VALUES ('{name}', '{ort}')"
-            db.session.execute(text(qstmt))
+            qstmt = text("INSERT INTO bahnhof (name, ort) VALUES (':name', ':ort')")
+            db.session.execute(qstmt, {'name': name, 'ort': ort})
             db.session.commit()
             return redirect('/home')
         else:
@@ -236,12 +239,13 @@ def new_station_page():
 
 @app.route('/train')
 def train_page():
-    cookie = request.cookies.get('name')
-    if not request.cookies.get('name'):
-        return redirect('/login')
+    sessionName = session.get('name')
+    if not sessionName:
+        return redirect(url_for('login_page'))
+    
     train_id = request.args.get('id')
-    qstmt = f"SELECT * FROM zug WHERE id = {train_id}"
-    result = db.session.execute(text(qstmt)).fetchall()
+    qstmt = text("SELECT * FROM zug WHERE id = :trainId")
+    result = db.session.execute(qstmt, {'trainId': train_id}).fetchall()
     print("Results Trains: ", result)
     print("Länge Liste: ", len(result))
     return render_template('train.html', result=result)
