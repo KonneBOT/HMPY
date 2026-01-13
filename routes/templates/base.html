@@ -25,7 +25,7 @@
               <a class="nav-link active" aria-current="page" href="/home">Home</a>
             </li>
 
-            {% if request.cookies.get('name') %}
+            {% if request.cookies.get('session') and request.cookies.get('session').split('.')|length == 3 %}
             <li class="nav-item">
               <a class="nav-link" href="/logout">Logout</a>
             </li>
@@ -51,9 +51,11 @@
           </ul>
         </div>
       </div>
-        {% if request.cookies.get('name') %}
-        <h3>{{ request.cookies.get('name') }}</h3>
-        {% else %}
+        {% if request.cookies.get('session') %}
+          {% set jwt_data = request.cookies.get('session')|decode_jwt_payload %}
+          {% if jwt_data.get('name') %}
+            <h3>{{ jwt_data.get('name') }}</h3>
+          {% endif %}
         {% endif %}
     </nav>
 

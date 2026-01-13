@@ -52,7 +52,9 @@ def login_page():
         correct_answer = session.get('captcha_answer')
         if not correct_answer or user_captcha != correct_answer:
             flash("Captcha wrong - try again.", "error")
-            return render_template('login.html')
+            captcha_question = generate_captcha()
+            session.pop('name', None)  # Reset User Session
+            return render_template('login.html', captcha=captcha_question)
 
         qstmt = text("SELECT * FROM bugusers WHERE username = :username AND password = :password") # Query Statement
         print(f"qstmt: {qstmt}")
@@ -61,11 +63,14 @@ def login_page():
 
         if not user:
             print("Something wrong 3")
-            return render_template('login.html')
+            captcha_question = generate_captcha()
+            session.pop('name', None)  # Reset User Session
+            return render_template('login.html', captcha=captcha_question)
 
 
         print(f"Login: OK, Forwarding...", user)
         resp = redirect('/home')
+        print("[DEBUG]: Username on Login: " + username)
         session['name'] = username
         return resp
     else:
